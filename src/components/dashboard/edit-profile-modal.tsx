@@ -1,128 +1,106 @@
-
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { auth, db } from "@/firebase/config";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { Edit, Loader2, Save } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Skeleton } from "../ui/skeleton";
+import { useState, FormEvent, ChangeEvent, useRef } from 'react';
+import { supabase } from '@/supabase/config';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { UserProfile } from '@/app/dashboard/page';
+import { Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-type UserData = {
-  name: string;
-  username: string;
-  phone: string;
-};
+interface EditProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: UserProfile;
+}
 
-export function EditProfileModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [userData, setUserData] = useState<UserData>({ name: "", username: "", phone: "" });
+export function EditProfileModal({ isOpen, onClose, user }: EditProfileModalProps) {
+  const [name, setName] = useState(user.name);
+  const [username, setUsername] = useState(user.username);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (!isOpen) {
-      setIsLoading(true); // Reset loading state when dialog is closed
-      return;
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setUserData({
-            name: data.name || "",
-            username: data.username || "",
-            phone: data.phone || "",
-          });
-        }
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [isOpen]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setUserData(prev => ({ ...prev, [id]: value }));
-  }
-
-  const handleSaveChanges = async () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      toast({ title: "Error", description: "You must be logged in to save changes.", variant: "destructive" });
-      return;
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
     }
-    
-    setIsSaving(true);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
     try {
-      const userDocRef = doc(db, "users", currentUser.uid);
-      await updateDoc(userDocRef, {
-        name: userData.name,
-        username: userData.username,
-        phone: userData.phone,
-      });
-      toast({ title: "Success!", description: "Your profile has been updated.", className: "bg-accent text-accent-foreground" });
-      setIsOpen(false); // Close dialog on success
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      toast({ title: "Save Failed", description: "Could not update your profile. Please try again.", variant: "destructive"});
-    } finally {
-      setIsSaving(false);
-    }
-  }
+      let profile_picture = user.profile_picture;
 
+      if (imageFile) {
+        const filePath = `public/profile-pictures/${user.id}/${imageFile.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(filePath, imageFile, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+        profile_picture = publicUrl;
+      }
+
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ name, username, profile_picture })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+      
+      toast({ title: "Profile updated successfully!" });
+      onClose();
+      // You might want to refresh the page or update the state in the parent component
+      window.location.reload(); 
+
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full neumorphism-outset-heavy py-6 text-base" variant="outline">
-          <Edit className="mr-2 h-5 w-5" /> Edit Profile
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-md w-full rounded-2xl p-0.5 glowing-border bg-transparent border-0">
-         <div className="w-full h-full rounded-2xl p-6 bg-card/95 backdrop-blur-lg neumorphism-inset-heavy">
-            <DialogHeader>
-                <DialogTitle className="text-2xl font-headline">Edit Your Profile</DialogTitle>
-            </DialogHeader>
-            {isLoading ? (
-               <div className="space-y-6 mt-6">
-                  <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                  <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                  <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
-                  <Skeleton className="h-12 w-full" />
-               </div>
-            ) : (
-               <div className="space-y-6 mt-6">
-                  <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input id="name" value={userData.name} onChange={handleChange} className="neumorphism-inset-heavy" />
-                  </div>
-                   <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" value={userData.username} onChange={handleChange} className="neumorphism-inset-heavy" />
-                  </div>
-                   <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" value={userData.phone} onChange={handleChange} className="neumorphism-inset-heavy" />
-                  </div>
-                  <Button onClick={handleSaveChanges} disabled={isSaving} className="w-full neumorphism-outset-heavy bg-primary text-primary-foreground py-6">
-                      {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
-                      {isSaving ? "Saving..." : "Save Changes"}
-                  </Button>
-              </div>
-            )}
-        </div>
-      </DialogContent>
-    </Dialog>
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+      <div className="bg-background p-8 rounded-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4">Edit Profile</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="picture">Profile Picture</Label>
+            <Input id="picture" type="file" ref={fileInputRef} onChange={handleImageChange} />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={isUploading}>
+              {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

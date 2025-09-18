@@ -1,110 +1,58 @@
-
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Check, User } from "lucide-react";
-import { auth, db } from "@/firebase/config";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { InboxPanel } from "./inbox-panel";
+import { useState } from 'react';
+import { supabase } from '@/supabase/config';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { EditProfileModal } from './edit-profile-modal';
+import { UserProfile } from '@/app/dashboard/page'; // Reuse the type
+import { LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-type UserData = {
-  name: string;
-  username: string;
-  profilePicture: string | null;
-  hasCompletedZealyTasks?: boolean;
-};
+interface UserProfileCardProps {
+  user: UserProfile;
+}
 
-export function UserProfileCard() {
-    const [user, setUser] = useState<UserData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+export function UserProfileCard({ user }: UserProfileCardProps) {
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const router = useRouter();
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            if (currentUser) {
-                const userDocRef = doc(db, "users", currentUser.uid);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    setUser(userDoc.data() as UserData);
-                } else {
-                    // Handle case where user is auth'd but has no doc
-                    setUser({ name: "User Not Found", username: "", profilePicture: null });
-                }
-            } else {
-                // Handle signed out state
-                 setUser(null);
-            }
-            setIsLoading(false);
-        });
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
 
-        return () => unsubscribe();
-    }, []);
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
-    if (isLoading) {
-        return (
-             <div className="w-full p-0.5 glowing-border rounded-2xl">
-                <div className="relative w-full h-full rounded-2xl p-6 md:p-8 bg-card/80 backdrop-blur-sm neumorphism-inset-heavy flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex flex-col md:flex-row items-center gap-6">
-                        <Skeleton className="w-24 h-24 md:w-32 md:h-32 rounded-full p-1" />
-                        <div className="space-y-2 text-center md:text-left">
-                            <Skeleton className="h-10 w-48" />
-                            <Skeleton className="h-6 w-32" />
-                        </div>
-                    </div>
-                     <Skeleton className="h-10 w-10 rounded-md" />
-                </div>
-            </div>
-        )
-    }
-
-     if (!user) {
-        return (
-             <div className="w-full p-0.5 glowing-border rounded-2xl">
-                <div className="relative w-full h-full rounded-2xl p-6 md:p-8 bg-card/80 backdrop-blur-sm neumorphism-inset-heavy flex flex-col md:flex-row items-center justify-center gap-6">
-                    <p className="text-muted-foreground">Please sign in to view your dashboard.</p>
-                </div>
-            </div>
-        )
-    }
-
-    return (
-        <div className="w-full p-0.5 glowing-border rounded-2xl">
-            <div className="relative w-full h-full rounded-2xl p-6 md:p-8 bg-card/80 backdrop-blur-sm neumorphism-inset-heavy flex flex-col md:flex-row items-center justify-between gap-6">
-                 <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="relative">
-                        <Avatar className="w-24 h-24 md:w-32 md:h-32 neumorphism-outset-heavy p-1 glowing-border">
-                             <div className="relative w-full h-full rounded-full overflow-hidden">
-                                <AvatarImage src={user.profilePicture ?? undefined} alt="User avatar" data-ai-hint="futuristic portrait"/>
-                                <AvatarFallback className="bg-transparent"><User className="w-12 h-12" /></AvatarFallback>
-                            </div>
-                        </Avatar>
-                         {user.hasCompletedZealyTasks && (
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-tr from-yellow-400 to-amber-600 rounded-full flex items-center justify-center border-2 border-background animate-pulse-gold cursor-pointer">
-                                            <Check className="w-5 h-5 text-white" />
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>Successfully joined the waitlist!</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                         )}
-                    </div>
-                    <div className="text-center md:text-left">
-                        <h2 className="text-3xl md:text-4xl font-bold font-headline">{user.name}</h2>
-                        <p className="text-lg text-muted-foreground">@{user.username}</p>
-                    </div>
-                 </div>
-                 <div className="self-center md:self-start">
-                    <InboxPanel />
-                 </div>
-            </div>
-        </div>
-    )
+  return (
+    <>
+      <Card className="neumorphism-outset-heavy">
+        <CardHeader>
+          <CardTitle className="font-headline">Your Profile</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <Avatar className="w-24 h-24 mx-auto mb-4 neumorphism-outset-heavy p-1">
+            <AvatarImage src={user.profile_picture} alt={user.name} />
+            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+          </Avatar>
+          <h3 className="text-xl font-semibold">{user.name}</h3>
+          <p className="text-muted-foreground">@{user.username}</p>
+          <div className="mt-4 flex justify-center gap-2">
+            <Button onClick={() => setEditModalOpen(true)}>Edit Profile</Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        user={user}
+      />
+    </>
+  );
 }
