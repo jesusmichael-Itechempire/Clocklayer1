@@ -1,5 +1,4 @@
-tsx
-"use client"; // This is correctly placed
+"use client";
 
 import { SignUpFlow } from "@/components/signup-flow";
 import { useSearchParams } from 'next/navigation';
