@@ -1,30 +1,23 @@
-
 "use client";
 
 import { SignUpFlow } from "@/components/signup-flow";
-import { useSearchParams } from 'next/navigation'
-import { Suspense } from "react";
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-function WaitlistContent() {
+// Wrapper component to safely use useSearchParams
+function ReferralWrapper() {
   const searchParams = useSearchParams();
-  const refCode = searchParams.get('ref');
+  const referralCode = searchParams.get('ref');
 
+  return <SignUpFlow referralCode={referralCode} />;
+}
+
+export default function Home() {
   return (
-    <main className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:6rem_4rem]">
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_800px_at_50%_200px,hsl(var(--primary)/0.1),transparent)]"></div>
-      </div>
-      <SignUpFlow referralCode={refCode} />
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-br from-gray-900 via-gray-900 to-black">
+      <Suspense fallback={<div>Loading...</div>}>
+        <ReferralWrapper />
+      </Suspense>
     </main>
   );
 }
-
-
-export default function WaitlistPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <WaitlistContent />
-    </Suspense>
-  );
-}
-
