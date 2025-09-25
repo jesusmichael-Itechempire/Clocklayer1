@@ -1,7 +1,8 @@
-
 "use client";
 
-import { useState, useEffect } from "react";
+// THE FIX IS ON THIS LINE: We are adding 'useEffect' to the import from "react"
+import { useState, useEffect } from "react"; 
+
 import { supabase } from "@/supabase/config";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -107,9 +108,7 @@ export function SignUpFlow({ referralCode }: { referralCode: string | null }) {
               <Progress value={progress} className="h-2 bg-primary/20" />
               <div className="flex justify-between mt-1 text-xs text-muted-foreground">
                 {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-                  <span key={i} className={`w-1/6 text-center ${i + 1 <= step ? "font-bold text-primary-foreground" : ""}`}>
-                    {i + 1}
-                  </span>
+                  <span key={i} className={`w-1/6 text-center ${i + 1 <= step ? "font-bold text-primary-foreground" : ""}`}>\n                    {i + 1}\n                  </span>
                 ))}
               </div>
             </div>
