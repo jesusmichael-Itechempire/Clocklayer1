@@ -1,16 +1,16 @@
 
 import type { Metadata } from 'next';
-import { Lexend_Deca } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import Link from 'next/link';
 import { Toaster } from "@/components/ui/toaster";
 import { Button } from '@/components/ui/button';
 import './globals.css';
 import { Rocket, FileText, Presentation, Twitter } from 'lucide-react';
 
-const lexendDeca = Lexend_Deca({
+const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-lexend-deca',
+  variable: '--font-montserrat',
 });
 
 export const metadata: Metadata = {
@@ -78,7 +78,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${lexendDeca.variable} font-body antialiased`}>
+      <body className={`${montserrat.variable} font-body antialiased`}>
         <Header />
         <main>
           {children}
