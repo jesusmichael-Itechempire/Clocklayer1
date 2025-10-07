@@ -21,24 +21,26 @@ export const metadata: Metadata = {
 function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
-      <nav className="container mx-auto flex items-center justify-between p-4 flex-wrap gap-2 md:gap-4">
+      <nav className="container mx-auto flex items-center justify-between p-4">
         <Link href="/" className="text-2xl font-bold font-headline text-primary">
           Clocklayer
         </Link>
-        <div className="flex items-center gap-2 md:gap-4 order-last w-full md:w-auto md:order-none">
-          <Button asChild variant="ghost" className="glassmorphism text-foreground flex-grow md:flex-grow-0">
-            <Link href="/">Home</Link>
-          </Button>
-          <Button asChild variant="ghost" className="glassmorphism text-foreground flex-grow md:flex-grow-0">
-            <Link href="/contact">Contact</Link>
-          </Button>
-        </div>
-         <Button asChild className="glassmorphism text-foreground">
+        <div className="absolute left-1/2 -translate-x-1/2">
+           <Button asChild className="glassmorphism text-foreground">
             <Link href="/waitlist">
               <Rocket className="mr-2 h-4 w-4" />
               Join Waitlist
             </Link>
           </Button>
+        </div>
+        <div className="flex items-center gap-2 md:gap-4">
+          <Button asChild variant="ghost" className="glassmorphism text-foreground">
+            <Link href="/">Home</Link>
+          </Button>
+          <Button asChild variant="ghost" className="glassmorphism text-foreground">
+            <Link href="/contact">Contact</Link>
+          </Button>
+        </div>
       </nav>
     </header>
   );
