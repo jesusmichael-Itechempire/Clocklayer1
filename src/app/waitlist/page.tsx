@@ -34,7 +34,6 @@ export default function WaitlistPage() {
         loop
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover"
-        poster="https://res.cloudinary.com/dqouvpe2s/image/upload/v1755912425/3d-male-avatar-cartoon-man-with-glasses-Bnq3PC7J_ptuw5m.jpg"
       >
         <source src="/videos/waitlist-background.mp4" type="video/mp4" />
         Your browser does not support the video tag.
