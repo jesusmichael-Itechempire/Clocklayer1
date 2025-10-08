@@ -55,7 +55,7 @@ export default function WelcomePage() {
                   <p className="text-muted-foreground max-w-lg mx-auto mb-6 text-sm">
                     You have successfully completed all necessary verifications. Please complete this final form to secure your place on the Clock Layer waitlist.
                   </p>
-                  <div className="w-full max-w-lg mx-auto aspect-video rounded-lg overflow-hidden neumorphism-inset-heavy">
+                  <div className="w-full max-w-3xl mx-auto h-[70vh] rounded-lg overflow-hidden neumorphism-inset-heavy">
                      <iframe
                         src={googleFormLink + "?embedded=true"}
                         width="100%"
