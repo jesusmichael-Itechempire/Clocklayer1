@@ -41,7 +41,7 @@ export default function WaitlistPage() {
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-50 p-4">
         <h1 className="text-4xl font-bold mb-4">Be among the first adopters</h1>
         <Link href="https://verify-with.blockpass.org/?clientId=clock_layer_waitlist_29249" passHref>
-          <Button className="neumorphism-outset-heavy bg-primary text-primary-foreground py-3 px-6 text-md font-bold mb-8 animate-pulse-mix">
+          <Button className="glassmorphism text-white py-3 px-6 text-md font-bold mb-8 animate-pulse-mix">
             <Rocket className="mr-2 h-5 w-5" />
             Join Waitlist
           </Button>
