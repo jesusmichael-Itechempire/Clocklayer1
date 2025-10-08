@@ -16,46 +16,46 @@ export default function WelcomePage() {
         <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_300px,hsl(var(--primary)/0.2),transparent)]"></div>
       </div>
       <main className="flex min-h-screen w-full flex-col items-center justify-center p-4">
-        <div className="w-full max-w-4xl space-y-8 animate-subtle-float">
+        <div className="w-full max-w-2xl space-y-8 animate-subtle-float">
           <div className="w-full p-1 glowing-border rounded-2xl bg-transparent">
-            <div className="relative w-full h-full rounded-2xl p-8 md:p-12 bg-blue-950/80 backdrop-blur-md neumorphism-inset-heavy text-center">
+            <div className="relative w-full h-full rounded-2xl p-8 md:p-10 bg-blue-950/80 backdrop-blur-md neumorphism-inset-heavy text-center">
 
               {formSubmitted ? (
                 <>
-                  <BadgeCheck className="w-20 h-20 text-accent mx-auto mb-6 animate-pulse-gold" />
-                  <h1 className="text-4xl font-bold font-headline mb-4 text-primary-foreground">Thank You!</h1>
-                  <p className="text-muted-foreground max-w-md mx-auto mb-8">
+                  <BadgeCheck className="w-16 h-16 text-accent mx-auto mb-4 animate-pulse-gold" />
+                  <h1 className="text-3xl font-bold font-headline mb-3 text-white">Thank You!</h1>
+                  <p className="text-muted-foreground max-w-md mx-auto mb-6 text-sm">
                     You have successfully joined the Clock Layer waitlist. Welcome to the revolution!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-foreground">
+                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-white text-sm py-2 px-4">
                         <Link href="/">
                             <Home className="mr-2 h-4 w-4" /> Go Home
                         </Link>
                      </Button>
-                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-foreground">
+                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-white text-sm py-2 px-4">
                         <a href="https://clocklayer1.netlify.app/" target="_blank" rel="noopener noreferrer">
                             <Info className="mr-2 h-4 w-4" /> Learn More
                         </a>
                      </Button>
-                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-foreground">
+                     <Button asChild className="neumorphism-outset-heavy glassmorphism text-white text-sm py-2 px-4">
                         <Link href="/contact">
                            <Send className="mr-2 h-4 w-4" /> Contact Us
                         </Link>
                      </Button>
                   </div>
-                   <p className="text-xs text-muted-foreground mt-8">
+                   <p className="text-xs text-muted-foreground mt-6">
                         If you encountered any complaints during the onboarding process, please don't hesitate to contact us.
                     </p>
                 </>
               ) : (
                 <>
-                  <BadgeCheck className="w-20 h-20 text-accent mx-auto mb-6" />
-                  <h1 className="text-4xl font-bold font-headline mb-4 text-primary-foreground">Congratulations & Welcome!</h1>
-                  <p className="text-muted-foreground max-w-lg mx-auto mb-8">
+                  <BadgeCheck className="w-16 h-16 text-accent mx-auto mb-4" />
+                  <h1 className="text-3xl font-bold font-headline mb-3 text-white">Congratulations & Welcome!</h1>
+                  <p className="text-muted-foreground max-w-lg mx-auto mb-6 text-sm">
                     You have successfully completed all necessary verifications. Please complete this final form to secure your place on the Clock Layer waitlist.
                   </p>
-                  <div className="w-full aspect-video rounded-lg overflow-hidden neumorphism-inset-heavy">
+                  <div className="w-full max-w-lg mx-auto aspect-video rounded-lg overflow-hidden neumorphism-inset-heavy">
                      <iframe
                         src={googleFormLink + "?embedded=true"}
                         width="100%"
@@ -63,23 +63,11 @@ export default function WelcomePage() {
                         frameBorder="0"
                         marginHeight={0}
                         marginWidth={0}
-                        onLoad={() => {
-                            // A simple way to detect submission is to listen for the load event again after a delay.
-                            // This is not foolproof but works for many cases.
-                            setTimeout(() => {
-                                // This is a trick: we can't truly know if the form was submitted.
-                                // Instead, we can assume after a certain time in the future or after a reload.
-                                // For a better UX, we'll just show the buttons after a short delay
-                                // and let the user feel like they "submitted" it.
-                                // A more robust solution needs backend webhooks from Google Forms which is complex.
-                                // For now, we will add a button the user can click.
-                            }, 5000);
-                        }}
                         >
                         Loading…
                     </iframe>
                   </div>
-                   <Button onClick={() => setFormSubmitted(true)} className="mt-8 neumorphism-outset-heavy bg-primary text-primary-foreground py-6 text-lg">
+                   <Button onClick={() => setFormSubmitted(true)} className="mt-6 neumorphism-outset-heavy bg-primary text-white py-2 px-4 text-sm font-bold">
                         I have completed the form
                     </Button>
                 </>

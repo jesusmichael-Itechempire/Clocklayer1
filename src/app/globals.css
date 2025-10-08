@@ -121,8 +121,8 @@
     height: 200%;
     background: conic-gradient(
       transparent,
-      var(--glow-start),
-      var(--glow-end),
+      hsl(190, 100%, 70%),
+      hsl(300, 100%, 80%),
       transparent 30%
     );
     animation: rotate 6s linear infinite;
@@ -168,4 +168,32 @@
 }
 .animate-pulse-gold {
   animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-blue {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 2px #add8e6, 0 0 4px #add8e6, 0 0 6px #87ceeb;
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 4px #add8e6, 0 0 8px #87ceeb, 0 0 12px #00bfff;
+    }
+}
+
+.animate-pulse-blue {
+  animation: pulse-blue 2s infinite;
+}
+
+.animate-pulse-mix {
+  animation: pulse-mix 4s infinite;
+}
+
+@keyframes pulse-mix {
+  0%, 100% {
+    box-shadow: 0 0 5px hsl(190, 100%, 70%), 0 0 10px hsl(190, 100%, 70%);
+  }
+  50% {
+    box-shadow: 0 0 5px hsl(300, 100%, 80%), 0 0 10px hsl(300, 100%, 80%);
+  }
 }
