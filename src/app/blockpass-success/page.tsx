@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -17,13 +16,14 @@ export default function BlockpassSuccessPage() {
         <div className="w-full max-w-2xl space-y-8 animate-subtle-float">
           <div className="w-full p-0.5 glowing-border rounded-2xl bg-transparent">
             <div className="relative w-full h-full rounded-2xl p-8 md:p-12 bg-card/80 backdrop-blur-sm neumorphism-inset-heavy text-center">
+
               <CheckCircle className="w-16 h-16 text-accent mx-auto mb-4" />
               <h1 className="text-3xl font-bold font-headline mb-3">Verification Successful!</h1>
               <p className="text-muted-foreground max-w-md mx-auto mb-6 text-sm">
                 You have passed the first phase. Now, proceed to Zealy to complete the required quests and secure your spot on the waitlist.
               </p>
               <a href={zealyLink} target="_blank" rel="noopener noreferrer">
-                <Button className="neumorphism-outset-heavy bg-primary text-primary-foreground py-2 px-4 text-sm font-bold mb-6 animate-pulse-mix">
+                <Button className="neumorphism-outset-heavy bg-primary text-white py-2 px-4 text-sm font-bold mb-6 animate-pulse-mix">
                   <Rocket className="mr-2 h-4 w-4" /> Continue to Zealy <ExternalLink className="ml-2 h-3 w-3"/>
                 </Button>
               </a>
