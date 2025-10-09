@@ -54,7 +54,10 @@ export default function WaitlistPage() {
       </video>
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white bg-black bg-opacity-50 p-4">
         
-        <h1 className="text-4xl font-bold mb-4">Be among the first adopters</h1>
+        <h1 className="text-4xl font-bold mb-4">
+          <span className="text-cyan-400">Be among the </span>
+          <span className="text-pink-500">first adopters</span>
+        </h1>
         
         <div className="mb-2">
             {isCaptchaReady && siteKey ? (
